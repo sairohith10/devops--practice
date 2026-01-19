@@ -28,6 +28,9 @@ jobs:
           echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
           echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+          echo "===== KUBECONFIG FILE CONTENT ====="
+          cat $HOME/.kube/config
+          echo "==================================="
 
       - name: Debug kube access
         run: |
@@ -38,4 +41,5 @@ jobs:
         run: |
           kubectl apply -f k8s/
           kubectl rollout restart deployment devops-app
+
 
