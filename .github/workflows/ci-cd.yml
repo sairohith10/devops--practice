@@ -25,16 +25,17 @@ jobs:
       - name: Setup kubeconfig
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG_DATA }}" > $HOME/.kube/config
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
+          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+
+      - name: Debug kube access
+        run: |
+          kubectl config view
+          kubectl get nodes
 
       - name: Deploy to Kubernetes
-        env:
-          KUBECONFIG: $HOME/.kube/config
         run: |
-          kubectl config get-contexts
-          kubectl get nodes
           kubectl apply -f k8s/
           kubectl rollout restart deployment devops-app
-
 
