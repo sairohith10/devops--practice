@@ -22,13 +22,6 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:latest
 
-      # ===== DEBUG SECRET LENGTH =====
-      - name: Debug kube secret
-        run: |
-          echo "Secret length:"
-          echo "${{ secrets.KUBECONFIG_DATA }}" | wc -c
-
-      # ===== SETUP KUBECONFIG =====
       - name: Setup kubeconfig
         run: |
           mkdir -p $HOME/.kube
@@ -36,19 +29,6 @@ jobs:
           chmod 600 $HOME/.kube/config
           echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
-          echo "=== FILE SIZE ==="
-          ls -l $HOME/.kube/config
-
-          echo "=== FILE CONTENT (first 20 lines) ==="
-          head -n 20 $HOME/.kube/config
-
-      # ===== TEST KUBE ACCESS =====
-      - name: Test Kubernetes Access
-        run: |
-          kubectl config view
-          kubectl get nodes
-
-      # ===== DEPLOY =====
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f k8s/
